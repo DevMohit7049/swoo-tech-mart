@@ -79,12 +79,6 @@ npm install
 
 Create `.env` file:
 ```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/swoo-tech-mart
-NODE_ENV=development
-JWT_SECRET=your_secret_key_here
-JWT_EXPIRE=7d
-```
 
 Start backend:
 ```bash
@@ -101,77 +95,7 @@ npm install
 npm run dev
 ```
 
-Frontend runs at: `http://localhost:5173`
 
----
-
-## 📚 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/profile` - Get user profile
-- `PUT /api/auth/profile` - Update profile
-
-### Products
-- `GET /api/products` - Get all products
-- `GET /api/products/:id` - Get single product
-- `POST /api/products` - Create product (admin)
-- `PUT /api/products/:id` - Update product (admin)
-- `DELETE /api/products/:id` - Delete product (admin)
-
-### Orders
-- `POST /api/orders` - Create order
-- `GET /api/orders/my-orders` - Get user orders
-- `GET /api/orders/:id` - Get order details
-- `PUT /api/orders/:id` - Update order (admin)
-- `DELETE /api/orders/:id` - Delete order (admin)
-
----
-
-## 🗄️ Database Models
-
-### User
-```javascript
-{
-  name: String,
-  email: String (unique),
-  password: String (hashed),
-  phone: String,
-  address: Object,
-  role: 'user' | 'admin',
-  createdAt: Date
-}
-```
-
-### Product
-```javascript
-{
-  name: String,
-  description: String,
-  price: Number,
-  category: String,
-  stock: Number,
-  image: String,
-  rating: Number,
-  reviews: Array,
-  createdAt: Date
-}
-```
-
-### Order
-```javascript
-{
-  userId: ObjectId,
-  products: Array,
-  totalAmount: Number,
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered',
-  shippingAddress: Object,
-  createdAt: Date
-}
-```
-
----
 
 ## 🛡️ Features
 
@@ -203,28 +127,7 @@ Frontend runs at: `http://localhost:5173`
 
 ---
 
-## 📝 Environment Variables
 
-### Backend `.env`
-```
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/swoo-tech-mart
-NODE_ENV=development
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRE=7d
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
----
 
 ## 📄 License
 
@@ -234,7 +137,7 @@ This project is licensed under MIT License - see LICENSE file for details.
 
 ## 👤 Author
 
-**Swoo Tech Mart Team**
+**Mohit Tomar**
 
 ## 🙏 Acknowledgments
 
@@ -246,8 +149,6 @@ This project is licensed under MIT License - see LICENSE file for details.
 - Express.js documentation
 
 ---
-
-## 📞 Support
 
 For support, email support@swootechmart.com or open an issue in the repository.
 

@@ -1,0 +1,63 @@
+const ProductGrid = ({ products }) => {
+
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {products.map((item, i) => (
+                <div key={i} className="bg-white rounded-xl p-4 flex flex-col">
+
+                    <div className="relative flex justify-center items-center mb-3">
+                        {item.save && (
+                            <span className="absolute top-0 left-0 bg-brand-primary text-white text-xs px-2 py-1 rounded">
+                                SAVE {item.save}
+                            </span>
+                        )}
+                        <img src={item.img} className="h-28 object-contain" />
+                    </div>
+
+                    <p className="text-sm font-medium mb-1 line-clamp-2">
+                        {item.title}
+                    </p>
+
+                    <div className="text-sm mb-2">
+                        <span className="text-red-500 font-semibold">{item.price}</span>
+                        {item.old && (
+                            <span className="text-gray-400 line-through ml-2">
+                                {item.old}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-1 text-xs mb-2">
+                        {item.tag1 && (
+                            <span className="bg-brand-primary-light text-brand-primary px-2 py-0.5 rounded">
+                                {item.tag1}
+                            </span>
+                        )}
+                        {item.tag2 && (
+                            <span className="bg-red-100 text-red-500 px-2 py-0.5 rounded">
+                                {item.tag2}
+                            </span>
+                        )}
+                        {item.extra && (
+                            <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
+                                {item.extra}
+                            </span>
+                        )}
+                    </div>
+
+                    <p className={`text-xs ${item.stock === "In stock"
+                        ? "text-brand-primary"
+                        : item.stock === "Out of stock"
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }`}>
+                        {item.stock}
+                    </p>
+
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default ProductGrid;

@@ -1,0 +1,216 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* ============================================
+     SHADCN REQUIRED VARIABLES (hsl format)
+     Inhe mat hatao — shadcn components inpe depend hain
+  ============================================ */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 122 100% 35%;
+    /* brand green — #00B207 */
+    --primary-foreground: 0 0% 100%;
+    /* white text on green */
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 97%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 84% 60%;
+    /* red — #ef4444 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 122 100% 35%;
+    /* brand green focus ring */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 142 60% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 0 0% 18%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 142 60% 45%;
+  }
+
+  /* ============================================
+     CUSTOM E-COMMERCE VARIABLES
+  ============================================ */
+  :root {
+    /* --- Brand Colors --- */
+    --brand-primary: 122 100% 35%;
+    /* #00B207 */
+    --brand-primary-dark: 122 94% 27%;
+    /* #008A04 */
+    --brand-primary-light: 120 69% 95%;
+    /* #EAFBEA */
+    --brand-gray-light: 0 0% 90%;
+    /* #E6E6E6 */
+
+    --button-color: 122 100% 35%;
+
+    --brand-red: 1 79% 60%;
+    /* #EA4B48 */
+    --brand-amber: 43 100% 50%;
+    /* #FFB800 */
+    --brand-amber-light: 44 100% 92%;
+    /* soft yellow tint */
+
+    /* --- Layout Colors --- */
+    --header-bg: 0 0% 97%;
+    /* #F7F7F7 */
+    --navbar-bg: 0 0% 100%;
+    /* white main nav */
+    --footer-bg: 0 0% 7%;
+    /* #111111 */
+    --section-bg: 0 0% 97%;
+    /* #f7f7f7  — gray sections */
+    --sidebar-cat-bg: 0 0% 97%;
+    /* category sidebar */
+
+    /* --- Product Card --- */
+    --card-bg: 0 0% 100%;
+    --card-border: 0 0% 90%;
+    --card-shadow: 0 0% 0%;
+    /* used with opacity */
+    --price-color: 122 100% 35%;
+    /* brand green price */
+    --price-old: 0 0% 60%;
+    /* strikethrough old price */
+    --badge-sale: 1 79% 60%;
+    /* red OFF badge */
+    --badge-new: 122 100% 35%;
+    /* green NEW badge */
+    --badge-hot: 43 100% 50%;
+    /* yellow HOT badge */
+
+    /* --- UI Elements --- */
+    --star-color: 43 100% 50%;
+    /* yellow stars */
+    --free-shipping-bg: 122 100% 35%;
+    /* green shipping bar */
+    --promo-bar-bg: 0 0% 97%;
+    /* light promo bar */
+    --deals-timer-bg: 0 0% 10%;
+    /* countdown timer bg */
+    --wishlist-btn: 0 0% 75%;
+    /* subtle wishlist icon */
+    --compare-btn: 210 60% 50%;
+    /* blue compare btn */
+
+    /* --- Typography --- */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont,
+      'Segoe UI', sans-serif;
+    --font-size-xs: 0.75rem;
+    /* 12px */
+    --font-size-sm: 0.875rem;
+    /* 14px */
+    --font-size-base: 1rem;
+    /* 16px */
+    --font-size-lg: 1.125rem;
+    /* 18px */
+    --font-size-xl: 1.25rem;
+    /* 20px */
+    --font-size-2xl: 1.5rem;
+    /* 24px */
+    --font-size-3xl: 1.875rem;
+    /* 30px */
+
+    /* --- Spacing --- */
+    --spacing-xs: 0.25rem;
+    /* 4px */
+    --spacing-sm: 0.5rem;
+    /* 8px */
+    --spacing-md: 1rem;
+    /* 16px */
+    --spacing-lg: 1.5rem;
+    /* 24px */
+    --spacing-xl: 2rem;
+    /* 32px */
+    --spacing-section: 3rem;
+    /* 48px — section gap */
+    --spacing-container: 1280px;
+    /* max page width */
+
+    /* --- Border Radius --- */
+    --radius-sm: 0.25rem;
+    /* 4px — badges */
+    --radius-md: 0.5rem;
+    /* 8px — cards, buttons */
+    --radius-lg: 0.75rem;
+    /* 12px — modals */
+    --radius-full: 9999px;
+    /* pills */
+
+    /* --- Shadows --- */
+    --shadow-card: 0 1px 4px hsl(0 0% 0% / 0.08);
+    --shadow-card-hover: 0 6px 20px hsl(0 0% 0% / 0.12);
+    --shadow-dropdown: 0 8px 24px hsl(0 0% 0% / 0.15);
+  }
+
+  /* ============================================
+     BASE STYLES
+  ============================================ */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

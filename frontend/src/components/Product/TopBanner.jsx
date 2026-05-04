@@ -1,5 +1,5 @@
-import img from "../../assets/headphone.png";
-import mobileBanner from "../../assets/Laptop/mobile-banner.png";
+import img from "@/assets/ecommerce/headphone.png";
+import mobileBanner from "@/assets/Laptop/mobile-banner.png";
 
 const TopBanner = () => {
     return (

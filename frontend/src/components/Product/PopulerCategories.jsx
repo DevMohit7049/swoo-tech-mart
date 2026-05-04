@@ -1,4 +1,4 @@
-import RecentlyView from "../RecentlyView";
+import RecentlyView from "../UI/RecentlyView";
 
 const PopulerCategories = () => {
 

@@ -1,7 +1,7 @@
 import ProductCard from "./ProductCard";
 import SideBarFilter from "./SideBarFilter/SideBarFilter";
 import { useSelector } from "react-redux";
-import { selectCatalogProducts } from "@/features/products/productSelectors";
+import { selectCatalogProducts } from "@/store/products/productSelectors";
 import { useState } from "react";
 
 const Categories = () => {

@@ -1,7 +1,7 @@
 import ProductCard from "./ProductCard";
 import VerticalCategory from "./VerticalCategory";
 import { useSelector } from "react-redux";
-import { selectCatalogProducts } from "@/features/products/productSelectors";
+import { selectCatalogProducts } from "@/store/products/productSelectors";
 import { useParams } from "react-router-dom";
 
 const ProductSection = () => {

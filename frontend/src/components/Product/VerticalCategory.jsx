@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectCatalogProducts } from "@/features/products/productSelectors";
+import { selectCatalogProducts } from "@/store/products/productSelectors";
+import { EcomRoutes } from "@/constants/Routes";
 
 const VerticalCategory = () => {
     const products = useSelector(selectCatalogProducts);
@@ -20,7 +21,7 @@ const VerticalCategory = () => {
             <div className="grid grid-cols-2 lg:grid-cols-2 sm:grid-cols-1 gap-3">
                 {linksArr.map((link, i) => (
 
-                    <Link key={i} to={`/shop/category/${link.slug}`}>
+                    <Link key={i} to={`${EcomRoutes.SHOP_CATEGORY}/${link.slug}`}>
                         {link.name}
                     </Link>
                 ))}

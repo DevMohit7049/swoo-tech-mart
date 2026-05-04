@@ -1,18 +1,19 @@
 import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
-import Home from '../pages/Home';
-import Products from '../pages/Products';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import Contact from '../pages/Contact';
-import FeatureProduct from '../components/FeatureProduct';
+import Home from '../components/ecommerce/Home';
+import Products from '../components/ecommerce/Products';
+import Login from '@/components/auth/Login';
+import Register from '@/components/auth/Register';
+import Contact from '../components/pages/Contact';
+import FeatureProduct from '../components/UI/FeatureProduct';
 import AdminRoute from './adminRoute';
-import AdminDashboard from '../pages/admin/AdminDashboard';
+import AdminDashboard from '@/screens/layout/AdminDashboard';
 import SingleProductPage from '@/components/Product/SingleProductPage';
-import CategoryPage from '@/components/CategoryPage';
-import Cart from '@/pages/CartPage';
-import Checkout from '@/pages/Checkout';
-import ROUTE_PATHS from '@/config/routePaths';
+import CategoryPage from '@/components/UI/CategoryPage';
+import Cart from '@/components/ecommerce/CartPage';
+import Checkout from '@/components/ecommerce/Checkout';
+import ROUTE_PATHS from '@/constants/Routes';
+import About from '@/components/pages/About/About';
 
 export const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTE_PATHS.CONTACT,
         element: <Contact />
+      },
+      {
+        path:ROUTE_PATHS.ABOUT,
+        element:<About/>
       },
       {
         path: ROUTE_PATHS.CART,

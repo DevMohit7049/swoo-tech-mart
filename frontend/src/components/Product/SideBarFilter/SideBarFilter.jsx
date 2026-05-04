@@ -7,7 +7,7 @@ import microlancer from '@/assets/BrandLogo/microlancer.png';
 import photodune from '@/assets/BrandLogo/photodune.png';
 import videohive from '@/assets/BrandLogo/videohive.png';
 import { useSelector } from "react-redux";
-import { selectCatalogProducts } from "@/features/products/productSelectors";
+import { selectCatalogProducts } from "@/store/products/productSelectors";
 
 const SideBarFilter = ({ products, setFilteredProducts }) => {
 

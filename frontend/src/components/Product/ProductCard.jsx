@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { EcomRoutes } from "@/constants/Routes";
 
 const ProductCard = ({ item }) => {
 
@@ -24,7 +25,7 @@ const ProductCard = ({ item }) => {
                     </span>
                 )}
             </div>
-            <Link to={`product/${item.slug}`} className="flex flex-col items-center gap-2">
+            <Link to={`${EcomRoutes.SHOP_PRODUCT}/${item.slug}`} className="flex flex-col items-center gap-2">
                 <motion.img
                     src={item.img}
                     className="h-28 object-contain"

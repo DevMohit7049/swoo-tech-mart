@@ -37,9 +37,29 @@ export function buildProductFormData(data) {
   return formData;
 }
 
+
 export async function fetchProductsApi() {
-  const response = await Axios.get(productBase);
-  return response?.data?.products;
+  const response = await Axios.get("/user-products/get-products");
+  const payload = response?.data;
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.products)) return payload.products;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.products)) return payload.data.products;
+  return [];
+}
+
+export async function getBanner() {
+  const response = await Axios.get("/user-banners/get-banners");
+  const payload = response?.data;
+
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.banners)) return payload.banners;
+  if (Array.isArray(payload?.products)) return payload.products;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.data?.banners)) return payload.data.banners;
+  if (payload?.banner) return [payload.banner];
+
+  return [];
 }
 
 export async function createProductApi(formData) {

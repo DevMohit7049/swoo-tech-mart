@@ -10,7 +10,7 @@ const Categories = () => {
 
 
     return (
-        <section className="max-w-7xl mx-auto p-4 bg-gray-100 rounded-xl mb-5">
+        <section className="max-w-7xl mx-auto p-4 bg-brand-gray rounded-xl mb-5">
             <h2 className="text-lg font-semibold mb-4">Categories</h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

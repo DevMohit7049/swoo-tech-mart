@@ -30,7 +30,7 @@ const FeatureProduct = () => {
             <div className="px-4 max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    <div className="bg-gray-300 rounded-xl p-6 flex flex-col justify-center">
+                    <div className="-(--) rounded-xl p-6 flex flex-col justify-center">
                         <h2 className="uppercase font-semibold">featured brands</h2>
                         <div className="grid grid-cols-5 gap-5 items-center pt-4">
                             {
@@ -39,7 +39,7 @@ const FeatureProduct = () => {
                         </div>
                     </div>
 
-                    <div className="bg-gray-300 rounded-xl p-6 flex flex-col justify-center">
+                    <div className="-(--) rounded-xl p-6 flex flex-col justify-center">
                         <h2 className="uppercase font-semibold">Top Categories</h2>
                         <div className="grid grid-cols-4 gap-5 items-center pt-4">
                             {

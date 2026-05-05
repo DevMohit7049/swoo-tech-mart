@@ -351,13 +351,6 @@ const SingleProductPage = () => {
                             {formatInr(variantDisplayNumeric)}
                         </h2>
 
-                        <p className="text-xs text-gray-600 leading-relaxed">
-                            Affirm <span className="font-semibold">₹499/mo</span> in 12 months.{" "}
-                            <button type="button" className="text-brand-primary font-medium hover:underline">
-                                See more
-                            </button>
-                        </p>
-
                         <div className="flex items-center gap-2 text-brand-primary text-sm font-medium">
                             <FaCheck className="shrink-0 text-base" aria-hidden />
                             <span>{product.stock}</span>

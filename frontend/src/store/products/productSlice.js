@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { backendConfig } from "@/constants/contents/MainContent";
 import { finalProducts } from "@/Data/ProductData";
+import { createProductApi } from "@/api/productApi";
 
 const toSlug = (value = "") =>
     value
@@ -77,6 +78,20 @@ const toNumericId = (value = "") => {
     return Math.abs(hash) || Math.floor(Math.random() * 1000000) + 1;
 };
 
+const resolveCandidate = (value) => {
+    if (!value) return "";
+    if (typeof value === "string") return resolveMediaUrl(value);
+    if (typeof value === "object") {
+        return (
+            resolveMediaUrl(value.url) ||
+            resolveMediaUrl(value.image) ||
+            resolveMediaUrl(value.imageUrl) ||
+            ""
+        );
+    }
+    return "";
+};
+
 const buildThumbnailList = (product) => {
     const candidates = [
         ...(Array.isArray(product?.images) ? product.images : []),
@@ -89,7 +104,7 @@ const buildThumbnailList = (product) => {
         product?.imageUrl,
         product?.img,
     ]
-        .map(resolveMediaUrl)
+        .map(resolveCandidate)
         .filter(Boolean);
 
     return [...new Set(candidates)];
@@ -101,10 +116,23 @@ const mapProductToUi = (product) => {
     const title = product.name || product.title || "";
     const slug = product.slug || toSlug(title) || product._id || String(product.id || "");
     const numericId = Number.isFinite(Number(product.id)) ? Number(product.id) : toNumericId(product._id || slug);
-    const rawPrice =
-        typeof product.price === "number"
-            ? product.price
-            : Number(String(product.price || "").replace(/[^0-9.]/g, "")) || 0;
+    const priceSource =
+        product.price ??
+        product.salePrice ??
+        product.sellingPrice ??
+        product.mrp ??
+        product.product_mrp ??
+        product.amount ??
+        product.offerPrice;
+    const parsedPrimaryPrice =
+        typeof priceSource === "number"
+            ? priceSource
+            : Number(String(priceSource || "").replace(/[^0-9.]/g, "")) || 0;
+    const fallbackMrp =
+        typeof product.product_mrp === "number"
+            ? product.product_mrp
+            : Number(String(product.product_mrp || "").replace(/[^0-9.]/g, "")) || 0;
+    const rawPrice = parsedPrimaryPrice > 0 ? parsedPrimaryPrice : fallbackMrp;
     const stockValue =
         typeof product.stock === "number"
             ? product.stock > 0
@@ -113,9 +141,9 @@ const mapProductToUi = (product) => {
             : product.stock || "In stock";
     const thumbnailList = buildThumbnailList(product);
     const normalizedImage =
-        resolveMediaUrl(product.image) ||
-        resolveMediaUrl(product.imageUrl) ||
-        resolveMediaUrl(product.img) ||
+        resolveCandidate(product.image) ||
+        resolveCandidate(product.imageUrl) ||
+        resolveCandidate(product.img) ||
         thumbnailList[0] ||
         finalProducts[0]?.img;
 
@@ -126,17 +154,17 @@ const mapProductToUi = (product) => {
         slug,
         img: normalizedImage,
         image: normalizedImage,
-        imageUrl: resolveMediaUrl(product.imageUrl) || "",
-        thumbnailUrl: resolveMediaUrl(product.thumbnailUrl) || "",
+        imageUrl: resolveCandidate(product.imageUrl) || "",
+        thumbnailUrl: resolveCandidate(product.thumbnailUrl) || "",
         thumbnailImage:
-            resolveMediaUrl(product.thumbnailImage) ||
-            resolveMediaUrl(product.thumbnail) ||
-            resolveMediaUrl(product.thumbnailUrl) ||
+            resolveCandidate(product.thumbnailImage) ||
+            resolveCandidate(product.thumbnail) ||
+            resolveCandidate(product.thumbnailUrl) ||
             thumbnailList[0] ||
             normalizedImage,
         thumbnails: thumbnailList.length ? thumbnailList : [normalizedImage],
         rawPrice,
-        price: rawPrice ? `₹${rawPrice.toFixed(2)}` : product.price,
+        price: `₹${rawPrice.toFixed(2)}`,
         stock: stockValue,
         category: normalizeCategory(product.category),
         sku: product.sku || "N/A",
@@ -163,6 +191,18 @@ const mapProductToUi = (product) => {
 const mapProducts = (products = []) => {
     return products.map(mapProductToUi).filter(Boolean);
 };
+
+export const createProduct = createAsyncThunk(
+    "product/createProduct",
+    async (formData, { rejectWithValue }) => {
+        try {
+            const product = await createProductApi(formData);
+            return product;
+        } catch (e) {
+            return rejectWithValue(e?.response?.data || e?.message || "Failed to save product");
+        }
+    }
+);
 
 const productSlice = createSlice({
     name: "product",
@@ -193,14 +233,6 @@ const productSlice = createSlice({
             state.loading = false;
             state.catalogProducts = finalProducts;
         },
-        addProductSuccess(state, action) {
-            const product = action.payload;
-            if (!product) return;
-            state.loading = false;
-            state.products.push(product);
-            state.catalogProducts = mapProducts(state.products);
-            state.error = null;
-        },
         updateProductSuccess(state, action) {
             const updated = action.payload;
             if (!updated) return;
@@ -220,6 +252,24 @@ const productSlice = createSlice({
             state.error = null;
         },
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(createProduct.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(createProduct.fulfilled, (state, action) => {
+                const product = action.payload;
+                state.loading = false;
+                if (!product) return;
+                state.products.push(product);
+                state.catalogProducts = mapProducts(state.products);
+            })
+            .addCase(createProduct.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload || "Failed to save product";
+            });
+    },
 });
 
 export const {
@@ -227,7 +277,6 @@ export const {
     setProductError,
     setProductsAndCatalog,
     setProductsFetchFailed,
-    addProductSuccess,
     updateProductSuccess,
     deleteProductSuccess,
 } = productSlice.actions;

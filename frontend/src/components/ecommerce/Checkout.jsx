@@ -1,13 +1,20 @@
-import { useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getNumericPrice } from "@/store/cart/cartSlice";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Axios } from "@/constants/contents/MainContent";
+import { clearCart } from "@/store/cart/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { cartItems, totalPrice } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
   const [orderSuccess, setOrderSuccess] = useState("");
+  const [razorpayReady, setRazorpayReady] = useState(false);
 
   const checkoutSchema = yup.object({
     firstName: yup.string().trim().required("First name is required"),
@@ -41,6 +48,7 @@ const Checkout = () => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(checkoutSchema),
@@ -62,10 +70,167 @@ const Checkout = () => {
     },
   });
 
+  useEffect(() => {
+    const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    if (existingScript || window.Razorpay) {
+      setRazorpayReady(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => setRazorpayReady(true);
+    script.onerror = () => setOrderSuccess("Unable to load payment gateway.");
+    document.body.appendChild(script);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const fullName = String(user.name || user.fullName || "").trim();
+      const nameParts = fullName ? fullName.split(/\s+/) : [];
+      const resolvedFirstName = user.firstName || nameParts[0] || "";
+      const resolvedLastName =
+        user.lastName ||
+        (nameParts.length > 1 ? nameParts.slice(1).join(" ") : "");
+
+      reset((prev) => ({
+        ...prev,
+        firstName: resolvedFirstName,
+        lastName: resolvedLastName,
+        email: user.email || "",
+        phoneNumber: user.phone || user.number || user.mobile || "",
+      }));
+    }
+  }, [user, reset]);
+
   const paymentMethod = watch("paymentMethod");
 
-  const onSubmit = async () => {
-    setOrderSuccess("Order details validated successfully.");
+  const onSubmit = async (formValues) => {
+    setOrderSuccess("");
+
+    if (cartItems.length === 0) {
+      setOrderSuccess("Your cart is empty.");
+      return;
+    }
+
+    if (paymentMethod === "cod") {
+      setOrderSuccess("Order placed successfully with Cash on Delivery.");
+      dispatch(clearCart());
+      return;
+    }
+
+    if (!razorpayReady || !window.Razorpay) {
+      setOrderSuccess("Payment gateway not ready. Please try again.");
+      return;
+    }
+
+    const amount = Math.round(orderTotal * 100);
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setOrderSuccess("Invalid order amount.");
+      return;
+    }
+
+    try {
+      const payload = {
+        user: {
+          id: user?._id || user?.id || "",
+          name: `${formValues.firstName} ${formValues.lastName}`.trim(),
+          email: formValues.email,
+          phone: formValues.phoneNumber,
+        },
+        address: {
+          country: formValues.country,
+          addressLine1: formValues.addressLine1,
+          addressLine2: formValues.addressLine2,
+          city: formValues.city,
+          state: formValues.state,
+          zipCode: formValues.zipCode,
+        },
+        products: cartItems.map((item) => ({
+          id: item._id || item.id,
+          productId: item._id || item.id,
+          title: item.title || item.name || item.ProductName || "Product",
+          price: getNumericPrice(item.price || item.product_mrp),
+          qty: Number(item.quantity || item.qty || 1),
+          image: item.img || item.image || item.thumbnailImage || "",
+          slug: item.slug || "",
+          sku: item.sku || "",
+          category: item.category || "",
+          brand: item.brand || "",
+        })),
+        amount: orderTotal,
+        totalAmount: orderTotal,
+      };
+
+      const orderRes = await Axios.post("/payment/create/orderid", payload);
+      const orderData = orderRes?.data;
+      const createdOrder =
+        orderData?.orderid ||
+        orderData?.order ||
+        orderData?.data?.orderid ||
+        orderData?.data?.order ||
+        null;
+      const razorpayOrderId =
+        createdOrder?.id ||
+        orderData?.orderid?.id ||
+        orderData?.orderId ||
+        orderData?.id ||
+        "";
+      if (!razorpayOrderId) {
+        setOrderSuccess("Unable to create payment order.");
+        return;
+      }
+
+      const razorpayKey = import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!razorpayKey) {
+        setOrderSuccess("Razorpay key is missing. Add VITE_RAZORPAY_KEY_ID in env.");
+        return;
+      }
+
+      const options = {
+        key: razorpayKey,
+        amount: Number(createdOrder?.amount) || amount,
+        currency: "INR",
+        name: "Swoo Tech Mart",
+        description: "Order Payment",
+        order_id: razorpayOrderId,
+        prefill: {
+          name: `${formValues.firstName} ${formValues.lastName}`.trim(),
+          email: formValues.email,
+          contact: formValues.phoneNumber,
+        },
+        handler: async (response) => {
+          try {
+            const verifyRes = await Axios.post("/payment/verify", response);
+            if (verifyRes?.data?.success) {
+              dispatch(clearCart());
+              setOrderSuccess("Payment successful. Order placed.");
+              navigate("/");
+            } else {
+              setOrderSuccess("Payment verification failed.");
+            }
+          } catch {
+            setOrderSuccess("Payment verification failed.");
+          }
+        },
+        modal: {
+          ondismiss: () => setOrderSuccess("Payment popup closed before completing payment."),
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", (response) => {
+        const failureReason =
+          response?.error?.description ||
+          response?.error?.reason ||
+          response?.error?.source ||
+          "Payment failed.";
+        setOrderSuccess(failureReason);
+      });
+      razorpay.open();
+    } catch (e) {
+      setOrderSuccess(e?.response?.data?.message || "Payment failed. Please try again.");
+    }
   };
 
   const shipping = useMemo(() => {

@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 // Convert price string → number
 export const getNumericPrice = (price) => {
-  return Number(price.replace(/[^0-9.]/g, ""));
+  if (price === null || price === undefined) return 0;
+  if (typeof price === "number") return Number.isFinite(price) ? price : 0;
+  const normalized = String(price).replace(/[^0-9.]/g, "");
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
 };
 
 // Load cart safely
@@ -58,6 +62,8 @@ const cartSlice = createSlice({
       const existing = state.cartItems.find((i) => i.id === item.id);
 
       if (existing) {
+        // Keep latest product fields in cart (title/image/_id/etc) while incrementing qty.
+        Object.assign(existing, item);
         existing.quantity += item.quantity || 1;
       } else {
         state.cartItems.push({

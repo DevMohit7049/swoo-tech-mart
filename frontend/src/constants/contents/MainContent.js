@@ -2,7 +2,8 @@ import axios from "axios";
 import appLogo from "@/assets/ecommerce/swootech.png";
 
 const envBase =
-  import.meta.env.VITE_BASE_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_BASE_URL;
+  
 
 function apiOriginFromBase(baseUrl) {
   try {
@@ -73,3 +74,22 @@ export function attachAxiosAuthInterceptor(store) {
     (error) => Promise.reject(error)
   );
 }
+
+
+
+export const AxiosPayment = axios.create({
+  baseURL: backendConfig.base + '/payment',
+  withCredentials: true,
+});
+
+AxiosPayment.interceptors.request.use(
+  (config) => {
+    const state = store.getState();
+    const token = state?.userAuth?.token || getToken;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);

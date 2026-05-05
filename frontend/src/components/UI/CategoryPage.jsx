@@ -35,7 +35,7 @@ const CategoryPage = () => {
                                 {product.title}
                             </h3>
                             <p className="font-bold mt-2">{product.price}</p>
-                            <p className="text-xs text-gray-500">{product.stock}</p>
+                            <p className="text-xs -(--)">{product.stock}</p>
                         </Link>
                     ))}
                 </div>

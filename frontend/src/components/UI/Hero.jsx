@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 import slider3 from "@/assets/ecommerce/headphone.png";
 import watch from '@/assets/ecommerce/watch.png';
@@ -5,12 +6,14 @@ import games from '@/assets/ecommerce/games.png';
 import keyboard from '@/assets/ecommerce/keyboard.png';
 import camera from "@/assets/ecommerce/camera.png"
 import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
 import { categories } from "@/Data/ProductData";
 import { EcomRoutes } from "@/constants/Routes";
+import { getBanner } from "@/api";
 
 
 const Hero = () => {
+    
+    const [banners, setBanners] = useState([]);
 
     const containerVariants = {
         hidden: { opacity: 0, y: 20 },
@@ -34,6 +37,35 @@ const Hero = () => {
             transition: { duration: 0.45, ease: "easeOut" }
         }
     };
+
+    const handleBanner = async () => {
+        try {
+            const bannerData = await getBanner();
+            setBanners(Array.isArray(bannerData) ? bannerData : []);
+        } catch (err) {
+            console.error(err.response?.data?.message || "Failed to fetch banners");
+        }
+    };
+
+    useEffect(() => {
+        handleBanner();
+    }, []);
+
+    const getBannerImage = (index, fallback) => {
+        const banner = banners[index];
+        if (!banner) return fallback;
+        if (typeof banner === "string") return banner;
+        return (
+            banner.images?.[0] ||
+            banner.image ||
+            banner.bannerImage ||
+            banner.imageUrl ||
+            banner.url ||
+            fallback
+        );
+    };
+
+
 
     return (
         <>
@@ -79,7 +111,7 @@ const Hero = () => {
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.99 }}
                         transition={{ duration: 0.35 }}
-                        style={{ backgroundImage: `url(${slider3})` }}
+                        style={{ backgroundImage: `url(${getBannerImage(0, slider3)})` }}
                         className="md:col-span-2 bg-gray-300 rounded-xl p-6 flex flex-col justify-center bg-cover bg-center">
 
                         <motion.h2
@@ -88,7 +120,7 @@ const Hero = () => {
                             transition={{ delay: 0.25, duration: 0.5 }}
                             className="text-2xl md:text-3xl font-bold text-white"
                         >
-                            Noise Cancelling
+                            Noise Cancelling 
                         </motion.h2>
                         <motion.p
                             initial={{ opacity: 0, y: 12 }}
@@ -119,7 +151,7 @@ const Hero = () => {
                         whileTap={{ scale: 0.99 }}
                         transition={{ duration: 0.3 }}
                         className="bg-gray-100 rounded-xl p-4 flex flex-col justify-between bg-cover bg-center"
-                        style={{ backgroundImage: `url(${watch})` }}>
+                        style={{ backgroundImage: `url(${getBannerImage(1, watch)})` }}>
                         <div className="flex flex-col items-end justify-between">
                             <p className="text-xs text-gray-500">XIAOMI</p>
                             <h3 className="font-semibold">Sport Watch</h3>
@@ -136,7 +168,7 @@ const Hero = () => {
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.99 }}
                         transition={{ duration: 0.3 }}
-                        className="bg-gray-800 text-black rounded-xl p-4 md:col-span-1 bg-cover bg-center" style={{ backgroundImage: `url(${games})` }}>
+                        className="bg-gray-800 text-black rounded-xl p-4 md:col-span-1 bg-cover bg-center" style={{ backgroundImage: `url(${getBannerImage(2, games)})` }}>
                         <h3 className="font-semibold">HERO 11+ BLACK</h3>
                         <p className="text-brand-primary font-bold">$169</p>
                     </motion.div>
@@ -149,7 +181,7 @@ const Hero = () => {
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.99 }}
                             transition={{ duration: 0.3 }}
-                            className="bg-gray-200 rounded-xl p-4 bg-cover bg-center" style={{ backgroundImage: `url(${keyboard})` }}>
+                            className="bg-gray-200 rounded-xl p-4 bg-cover bg-center" style={{ backgroundImage: `url(${getBannerImage(3, keyboard)})` }}>
                             <h4 className="font-medium">Logitech Keyboard</h4>
                             <p className="text-yellow-500 text-sm">Best for all device</p>
                         </motion.div>
@@ -163,7 +195,7 @@ const Hero = () => {
                             whileTap={{ scale: 0.99 }}
                             transition={{ duration: 0.3 }}
                             className="bg-gray-200 rounded-xl p-4 bg-cover bg-center"
-                            style={{ backgroundImage: `url(${camera})` }}>
+                            style={{ backgroundImage: `url(${getBannerImage(4, camera)})` }}>
                             <h4 className="font-medium">Logitech camera</h4>
                         </motion.div>
                     </div>

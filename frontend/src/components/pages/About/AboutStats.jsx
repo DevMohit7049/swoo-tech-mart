@@ -18,14 +18,14 @@ const statsData = [
 
 const AboutStats = () => {
   return (
-    <section className="w-full px-4 py-8 bg-gray-100">
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-sm p-6 lg:p-10">
+    <section className="w-full px-4 py-8 -(--)">
+      <div className="max-w-7xl mx-auto -(--) rounded-2xl shadow-sm p-6 lg:p-10">
         
         {/* TOP TEXT */}
         <div className="mb-8">
-          <p className="text-sm font-semibold text-gray-600 uppercase">
+          <p className="text-sm font-semibold -(--) uppercase">
             Our purpose is to{" "}
-            <span className="text-green-600 font-bold">
+            <span className="-(--) font-bold">
               enrich and enhance
             </span>{" "}
             lives through technology
@@ -39,10 +39,10 @@ const AboutStats = () => {
               key={item.id}
               className="text-left border-t pt-4 lg:border-none lg:pt-0"
             >
-              <h2 className="text-2xl lg:text-3xl font-bold text-gray-900">
+              <h2 className="text-2xl lg:text-3xl font-bold -(--)">
                 {item.value}
               </h2>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm -(--) mt-1">
                 {item.label}
               </p>
             </div>

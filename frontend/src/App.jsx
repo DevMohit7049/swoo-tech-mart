@@ -15,7 +15,7 @@ function App() {
   useAppInitialization(dispatch, setShowLoader);
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen -(--)">
       <AnimatePresence>{showLoader && <BrandLoader />}</AnimatePresence>
       <Navbar />
       {/* <Breadcrumbs /> */}

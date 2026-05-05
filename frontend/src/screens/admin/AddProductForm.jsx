@@ -3,14 +3,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import {
-    addProductSuccess,
+    createProduct,
     updateProductSuccess,
     setProductLoading,
     setProductError,
 } from "@/store/products/productSlice";
 import {
     buildProductFormData,
-    createProductApi,
     updateProductApi,
 } from "@/api/productApi";
 import { useEffect } from "react";
@@ -130,8 +129,7 @@ const AddProductForm = ({ selectedProduct, setSelectedProduct }) => {
             reset();
          } else {
             const formData = buildProductFormData(data);
-            const product = await createProductApi(formData);
-            dispatch(addProductSuccess(product));
+            await dispatch(createProduct(formData)).unwrap();
             reset();
          }
       } catch (e) {

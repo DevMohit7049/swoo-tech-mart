@@ -6,15 +6,15 @@ const reviews = [
 
 const ReviewSection = () => {
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
+    <div className="-(--) border -(--) rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-slate-900">Reviews Management</h2>
-        <p className="text-sm text-slate-500">Approve, reject, or remove spam product reviews.</p>
+        <h2 className="text-xl font-bold -(--)">Reviews Management</h2>
+        <p className="text-sm -(--)">Approve, reject, or remove spam product reviews.</p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200">
+      <div className="overflow-x-auto rounded-xl border -(--)">
         <table className="w-full text-left">
-          <thead className="bg-slate-50">
+          <thead className="-(--)">
             <tr>
               <th className="p-3 text-sm font-semibold">User</th>
               <th className="p-3 text-sm font-semibold">Product</th>
@@ -26,7 +26,7 @@ const ReviewSection = () => {
           </thead>
           <tbody>
             {reviews.map((review) => (
-              <tr key={review.id} className="border-t border-slate-100">
+              <tr key={review.id} className="border-t -(--)">
                 <td className="p-3">{review.user}</td>
                 <td className="p-3">{review.product}</td>
                 <td className="p-3">{review.rating}/5</td>
@@ -36,19 +36,19 @@ const ReviewSection = () => {
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                      className="inline-flex items-center justify-center rounded-lg border -(--) -(--) px-3 py-2 text-sm font-medium -(--) hover:-(--)"
                     >
                       Approve
                     </button>
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                      className="inline-flex items-center justify-center rounded-lg border -(--) -(--) px-3 py-2 text-sm font-medium -(--) hover:-(--)"
                     >
                       Reject
                     </button>
                     <button
                       type="button"
-                      className="inline-flex items-center justify-center rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
+                      className="inline-flex items-center justify-center rounded-lg -(--) px-3 py-2 text-sm font-medium -(--) hover:-(--)"
                     >
                       Delete
                     </button>

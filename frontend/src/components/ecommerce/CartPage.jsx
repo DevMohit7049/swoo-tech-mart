@@ -11,7 +11,7 @@ const CartPage = () => {
   const { cartItems, totalPrice } = useSelector((state) => state.cart);
 
   const shipping = cartItems.length === 0 ? 0 : 80 + cartItems.length * 20;
-  console.log("cart items =>",shipping);
+
   
   const tax = totalPrice * 0.18;
   const orderTotal = totalPrice + shipping + tax;

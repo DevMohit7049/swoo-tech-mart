@@ -5,6 +5,7 @@ import { selectCatalogProducts } from "@/store/products/productSelectors";
 import { useParams } from "react-router-dom";
 
 const ProductSection = () => {
+    
     const products = useSelector(selectCatalogProducts);
     const { category } = useParams();
     
@@ -14,7 +15,7 @@ const ProductSection = () => {
         : products;
     
     return (
-        <section className="max-w-7xl mx-auto p-4 bg-gray-100 rounded-xl mb-5">
+        <section className="max-w-7xl mx-auto p-4 bg-brand-gray rounded-xl mb-5">
             <h2 className="text-lg font-semibold mb-4">
                 {category ? `${category} Products` : "Best Seller in this Category"}
             </h2>

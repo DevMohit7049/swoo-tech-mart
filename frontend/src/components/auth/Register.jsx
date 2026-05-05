@@ -4,14 +4,21 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import authIllustration from '@/assets/ecommerce/auth.png';
-import { registerUserApi } from '@/api/authApi';
+import { registerUserApi, sendOtp, verifyOtpApi } from '@/api/authApi';
 import { showSuccess } from '@/utils/toast';
 import ROUTE_PATHS from '@/constants/Routes';
+import OtpModal from '@/components/UI/OtpModel';
 
 const Register = () => {
 
     const [apiError, setApiError] = useState("");
     const navigate = useNavigate();
+
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [userEmail, setUserEmail] = useState("");
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
+    const [verifiedEmail, setVerifiedEmail] = useState("");
+    const [isSendingOtp, setIsSendingOtp] = useState(false);
 
     const registerSchema = yup.object({
         name: yup.string().required("Name is required"),
@@ -23,22 +30,71 @@ const Register = () => {
             .required("Password is required"),
     });
 
-    const { register,
-        handleSubmit, formState: { errors, isSubmitting }, } = useForm({ resolver: yupResolver(registerSchema) });
+    const {
+        register,
+        handleSubmit,
+        getValues,
+        watch,
+        formState: { errors, isSubmitting },
+    } = useForm({ resolver: yupResolver(registerSchema) });
+    const currentEmail = watch("email");
+
+    const isValidEmail = (email = "") =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+
+    const handleSendOtp = async () => {
+        const email = getValues("email")?.trim();
+        if (!isValidEmail(email)) {
+            setApiError("Enter a valid email before OTP verification.");
+            return;
+        }
+        try {
+            setApiError("");
+            setIsSendingOtp(true);
+            await sendOtp({ email });
+            setUserEmail(email);
+            setShowOtpModal(true);
+            showSuccess("OTP sent to your email");
+        } catch (err) {
+            setApiError(err.response?.data?.message || "Failed to send OTP");
+        } finally {
+            setIsSendingOtp(false);
+        }
+    };
 
     const onSubmit = async (data) => {
         setApiError("");
         try {
+            if (!isEmailVerified || verifiedEmail !== data.email?.trim()) {
+                setApiError("Please verify your email first.");
+                return;
+            }
             await registerUserApi(data);
-            showSuccess("Registration successful 🎉")
+            showSuccess("Registration successful");
             setTimeout(() => {
                 navigate(ROUTE_PATHS.ROOT);
             }, 3000);
+
         } catch (err) {
             const message =
                 err.response?.data?.message ||
                 "Something went wrong. Please try again.";
             setApiError(message);
+        }
+    };
+
+
+    const handleVerifyOtp = async (otp) => {
+        try {
+            await verifyOtpApi({ email: userEmail, otp });
+            showSuccess("Email verified successfully");
+            setIsEmailVerified(true);
+            setVerifiedEmail(userEmail);
+            setShowOtpModal(false);
+
+        } catch (err) {
+            setApiError(err.response?.data?.message || "Invalid OTP");
         }
     };
 
@@ -77,14 +133,32 @@ const Register = () => {
 
                             <div>
                                 <label className="block text-[12px] text-[#373737] font-medium mb-2">Email Address</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    {...register("email")}
-
-                                    className="w-full h-[40px] px-3 bg-transparent border border-[#d6d6d6] rounded-[4px] text-sm placeholder:text-[#b9b9b9] focus:outline-none focus:ring-1 focus:ring-[#1fba36] focus:border-[#1fba36]"
-                                    placeholder="Example@gmail.com"
-                                />
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        {...register("email", { onChange: () => {
+                                                if (isEmailVerified) {
+                                                    setIsEmailVerified(false);
+                                                    setVerifiedEmail("");
+                                                }
+                                            },
+                                        })}
+                                        className="w-full h-[40px] px-3 bg-transparent border border-[#d6d6d6] rounded-[4px] text-sm placeholder:text-[#b9b9b9] focus:outline-none focus:ring-1 focus:ring-[#1fba36] focus:border-[#1fba36]"
+                                        placeholder="Example@gmail.com"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleSendOtp}
+                                        disabled={isSendingOtp}
+                                        className="h-[40px] px-3 text-[11px] font-semibold uppercase tracking-wide bg-[#1fba36] text-white rounded-md hover:bg-[#17912a] disabled:opacity-60"
+                                    >
+                                        {isSendingOtp ? "Sending..." : "Send OTP"} 
+                                    </button>
+                                </div>
+                                {isEmailVerified && verifiedEmail === currentEmail?.trim() && (
+                                    <p className="text-green-600 text-sm mt-1">Email verified</p>
+                                )}
                                 {errors.email && (
                                     <p className="text-brand-red text-sm">{errors.email.message}</p>
                                 )}
@@ -149,7 +223,18 @@ const Register = () => {
                     </div>
                 </div>
             </div>
+
+            {/* ================= OTP MODAL ================= */}
+            {showOtpModal && (
+                <OtpModal
+                    email={userEmail}
+                    onClose={() => setShowOtpModal(false)}
+                    onVerify={handleVerifyOtp}
+                />
+            )}
         </div>
+
+
     );
 }
 

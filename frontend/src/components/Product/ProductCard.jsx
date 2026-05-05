@@ -4,7 +4,7 @@ import { EcomRoutes } from "@/constants/Routes";
 
 const ProductCard = ({ item }) => {
 
-
+   
     return (
         <motion.div
             className="bg-white rounded-xl p-4 flex flex-col h-full items-center border border-transparent"
@@ -39,7 +39,7 @@ const ProductCard = ({ item }) => {
 
 
             <div className="text-sm">
-                <span className="text-red-500 font-semibold">{item.price}</span>
+                <span className="text-brand-red font-semibold">{item.price}</span>
             </div>
 
             <div className="mt-auto text-xs">{item.stock}</div>

@@ -4,6 +4,7 @@ import { selectCatalogProducts } from "@/store/products/productSelectors";
 import { EcomRoutes } from "@/constants/Routes";
 
 const VerticalCategory = () => {
+    
     const products = useSelector(selectCatalogProducts);
     const linksArr = [...new Set(products.map((item) => item.category).filter(Boolean))].map((category) => ({
         name: category.charAt(0).toUpperCase() + category.slice(1),
